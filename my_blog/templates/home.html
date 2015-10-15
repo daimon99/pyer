@@ -12,6 +12,7 @@
             <div class='post-description'>
                 <p> {{ post.content }} </p>
             </div>
+            <a class='pure-button' href="{% url 'detail' id=post.id %}"> Read More >>> </a>
         </section>
     {% endfor %}
 </div><!-- /.blog-post -->
