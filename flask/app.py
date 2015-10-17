@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from flask import Flask, url_for
+from flask import Flask, url_for, render_template
 import time
 
 app=Flask(__name__, instance_relative_config=True)
@@ -38,18 +38,26 @@ def about():
     return 'The about page'
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    pass
+    if request.method == 'POST':
+        do_the_login()
+    else:
+        show_the_login_form()
 
+
+@app.route('/hello/')
+@app.route('/hello/<name>')
+def hello(name=None):
+    return render_template('hello.html', name=name)
 
 with app.test_request_context():
     print url_for('index')
     print url_for('login')
     print url_for('login', next='/')
     print url_for('profile', username='John Doe')
+    print url_for('static', filename='style.css')
 
 
 if __name__=='__main__':
     app.run(host='0.0.0.0')
-
