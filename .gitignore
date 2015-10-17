@@ -25,6 +25,7 @@ var/
 
 # setting for not public
 instance/
+uploads/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

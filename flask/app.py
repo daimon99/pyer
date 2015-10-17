@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from flask import Flask, url_for, render_template
+from flask import Flask, url_for, render_template, request, redirect
 import time
 
 app=Flask(__name__, instance_relative_config=True)
@@ -28,6 +28,7 @@ def profile(username):
 def show_post(post_id):
     return 'Post %d' % post_id
 
+
 @app.route('/projects/')
 def projects():
     return 'This is project page.'
@@ -50,6 +51,17 @@ def login():
 @app.route('/hello/<name>')
 def hello(name=None):
     return render_template('hello.html', name=name)
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save('uploads/uploaded_file.txt')
+        return redirect(url_for('hello'))
+    else:
+        return render_template('upload_file.html')
+
 
 with app.test_request_context():
     print url_for('index')
