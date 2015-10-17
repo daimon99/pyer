@@ -14,20 +14,30 @@ allconfig = '\n'.join(map(f, app.config.items()))
 print allconfig
 
 
-
-def timeit(fn):
-    def wrapper():
-        start = time.clock()
-        fn()
-        end = time.clock()
-        print 'used: ', end - start
-    return wrapper
+@app.route('/')
+def index():
+    return 'Hello World!';
 
 
-@timeit
-def foo():
-    print 'in foo()'
+@app.route('/user/<username>')
+def show_user_profile(username):
+    return 'User %s' % username
 
-foo = timeit(foo)
 
-foo()
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    return 'Post %d' % post_id
+
+@app.route('/projects/')
+def projects():
+    return 'This is project page.'
+
+
+@app.route('/about')
+def about():
+    return 'The about page'
+
+
+if __name__=='__main__':
+    app.run(host='0.0.0.0')
+
