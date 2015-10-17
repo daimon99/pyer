@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from flask import Flask
+from flask import Flask, url_for
 import time
 
 app=Flask(__name__, instance_relative_config=True)
@@ -9,9 +9,9 @@ app.config.from_object('config')
 app.config.from_pyfile('config.py')
 # 现在通过app.config["VAR_NAME"]，我们可以访问到对应的变量
 # allconfig = '\n'.join(['%s: %s' % (k, v) for k, v in app.config.items()])
-f = lambda a: '%s=%s' % (a[0], a[1])
-allconfig = '\n'.join(map(f, app.config.items()))
-print allconfig
+# f = lambda a: '%s=%s' % (a[0], a[1])
+# allconfig = '\n'.join(map(f, app.config.items()))
+# print allconfig
 
 
 @app.route('/')
@@ -20,7 +20,7 @@ def index():
 
 
 @app.route('/user/<username>')
-def show_user_profile(username):
+def profile(username):
     return 'User %s' % username
 
 
@@ -36,6 +36,18 @@ def projects():
 @app.route('/about')
 def about():
     return 'The about page'
+
+
+@app.route('/login')
+def login():
+    pass
+
+
+with app.test_request_context():
+    print url_for('index')
+    print url_for('login')
+    print url_for('login', next='/')
+    print url_for('profile', username='John Doe')
 
 
 if __name__=='__main__':
