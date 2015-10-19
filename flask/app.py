@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-from flask import Flask, url_for, render_template, request, redirect
+from flask import Flask, url_for, render_template, request, redirect, session, escape
 import time
 
 app=Flask(__name__, instance_relative_config=True)
@@ -16,7 +16,9 @@ app.config.from_pyfile('config.py')
 
 @app.route('/')
 def index():
-    return 'Hello World!';
+    if 'username' in session:
+        return 'Logged in as %s' % escape(session['username'])
+    return 'You are not logged in'
 
 
 @app.route('/user/<username>')
@@ -42,9 +44,20 @@ def about():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        do_the_login()
-    else:
-        show_the_login_form()
+        session['username'] = request.form['username']
+        return redirect(url_for('index'))
+    return '''
+        <form action='' method='post'>
+            <p><input type=text name=username>
+            <p><input type=submit value=Login>
+        </form>
+    '''
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))    
 
 
 @app.route('/hello/')
@@ -61,6 +74,27 @@ def upload_file():
         return redirect(url_for('hello'))
     else:
         return render_template('upload_file.html')
+
+
+#app.secret_key = '\x8d2\xe1\x93\xe9\xb9Lr\x99\x91\xc3\x07\xa3\x03j\x11\x8e%\xce\xe4\xf5\xf0\x85\x1a'
+
+
+#@app.errorhandler(404)
+#def not_found(error):
+#    return render_template('error.html'), 404
+
+
+@app.errorhandler(404)
+def not_found(error):
+    from flask import make_response
+    resp = make_response(render_template('error.html'), 404)
+    resp.headers['X-something'] = 'A value'
+    return resp
+
+
+from datetime import datetime
+print '-----------------'
+print 'App start at %s ' % datetime.now()
 
 
 with app.test_request_context():
